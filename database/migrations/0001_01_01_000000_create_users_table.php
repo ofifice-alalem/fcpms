@@ -8,6 +8,9 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * BR-001: يوجد نوعان فقط من المستخدمين (HR, Consultant).
+     * BR-004: لا يسمح بتسجيل الدخول إذا كانت الحالة inactive.
+     * BR-067: عدم الحذف الفعلي للبيانات (Soft Deletes).
      */
     public function up(): void
     {
@@ -17,8 +20,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // BR-001: الدور الأساسي (يتم بالتوازي مع spatie/laravel-permission)
+            $table->enum('role', ['hr', 'consultant'])->default('consultant');
+            
+            // BR-004: حالة حساب المستخدم
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            
             $table->rememberToken();
             $table->timestamps();
+            
+            // BR-067: سلامة البيانات السابقة وعدم الحذف الفعلي
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
