@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Repositories\Contracts\ConsultantRepositoryInterface;
 use App\Repositories\Contracts\DailyRecordRepositoryInterface;
+use App\Repositories\Contracts\SiteVisitRepositoryInterface;
 use App\Repositories\Contracts\TaskComponentRepositoryInterface;
 use App\Repositories\Contracts\TaskDefinitionRepositoryInterface;
 use App\Repositories\Contracts\WorkScheduleRepositoryInterface;
 use App\Repositories\Eloquent\ConsultantRepository;
 use App\Repositories\Eloquent\DailyRecordRepository;
+use App\Repositories\Eloquent\SiteVisitRepository;
 use App\Repositories\Eloquent\TaskComponentRepository;
 use App\Repositories\Eloquent\TaskDefinitionRepository;
 use App\Repositories\Eloquent\WorkScheduleRepository;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(WorkScheduleRepositoryInterface::class, WorkScheduleRepository::class);
         $this->app->bind(TaskDefinitionRepositoryInterface::class, TaskDefinitionRepository::class);
         $this->app->bind(TaskComponentRepositoryInterface::class, TaskComponentRepository::class);
+        $this->app->bind(SiteVisitRepositoryInterface::class, SiteVisitRepository::class);
     }
 
     /**

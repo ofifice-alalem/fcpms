@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable;
@@ -22,6 +23,7 @@ class SiteVisit extends Model implements AuditableContract
         'site_id',
         'visit_started_at',
         'visit_finished_at',
+        'status',
         'notes',
     ];
 
@@ -33,5 +35,15 @@ class SiteVisit extends Model implements AuditableContract
     public function dailyRecord(): BelongsTo
     {
         return $this->belongsTo(DailyRecord::class);
+    }
+
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class);
+    }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(TaskResponse::class);
     }
 }
