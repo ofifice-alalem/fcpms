@@ -465,6 +465,18 @@ Performance Weight
 
 ---
 
+# Target Assignment (Site & Consultant)
+
+تحدد نطاق ظهور المهمة:
+
+```text
+Site Assignment: (All Sites / Specific Sites)
+
+Consultant Assignment: (All Consultants / Specific Consultants)
+```
+
+---
+
 # Example
 
 ```text
@@ -481,6 +493,11 @@ Daily Task
 Required:
 
 Yes
+
+
+Target Consultants:
+
+All Consultants (or Specific Consultants)
 
 
 Performance Weight:

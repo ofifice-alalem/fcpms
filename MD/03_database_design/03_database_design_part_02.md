@@ -173,7 +173,7 @@ Component Options
 
 ↓
 
-Task Site Assignments
+Task Site Assignments  /  Task Consultant Assignments
 
 ↓
 
@@ -555,6 +555,63 @@ BR-037
 BR-038
 
 BR-039
+
+---
+
+# ==========================================================
+# Table 12 — task_consultant_assignments
+# ==========================================================
+
+## الهدف
+
+تخصيص المهمة لاستشاريين محددين (Consultant-Specific Tasks).
+
+---
+
+## المسؤولية
+
+إذا لم يوجد أي سجل للمهمة داخل هذا الجدول، تعتبر المهمة متاحة لجميع الاستشاريين.
+
+أما إذا وجد سجل أو أكثر، فتظهر المهمة فقط للاستشاريين المحجوزين داخل هذا الجدول.
+
+---
+
+## الحقول
+
+| الحقل | الوصف |
+|--------|-----------------------------|
+| id | المعرف الأساسي |
+| task_definition_id | المهمة |
+| consultant_id | الاستشاري |
+| created_at | تاريخ الإنشاء |
+
+---
+
+## العلاقات
+
+Task Definition
+
+↓
+
+Task Consultant Assignments (One To Many)
+
+---
+
+Consultant
+
+↓
+
+Task Consultant Assignments (One To Many)
+
+---
+
+## قواعد العمل
+
+BR-036
+
+BR-036-A
+
+BR-036-B
 
 ---
 

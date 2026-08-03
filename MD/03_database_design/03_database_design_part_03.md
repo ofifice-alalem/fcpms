@@ -70,6 +70,9 @@ Task Attachment
 | id | المعرف الأساسي |
 | consultant_id | الاستشاري |
 | work_date | تاريخ العمل |
+| required_daily_tasks | عدد المهام اليومية المطلوبة (مشتق مخزن) |
+| completed_daily_tasks | عدد المهام اليومية المكتملة (مشتق مخزن) |
+| completion_percentage | نسبة الإنجاز اليومية % (مشتق مخزن) |
 | created_at | وقت إنشاء السجل |
 | updated_at | آخر تعديل |
 
