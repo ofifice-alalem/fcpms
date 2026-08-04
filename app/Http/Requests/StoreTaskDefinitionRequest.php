@@ -8,7 +8,7 @@ class StoreTaskDefinitionRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('manage_tasks');
+        return true;
     }
 
     public function rules(): array
@@ -18,7 +18,7 @@ class StoreTaskDefinitionRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'type' => ['required', 'in:daily,weekly,monthly,on_demand'],
             'is_required' => ['required', 'boolean'],
-            'performance_weight' => ['required', 'numeric', 'min:0', 'max:100'],
+            'performance_weight' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'site_ids' => ['nullable', 'array'],
             'site_ids.*' => ['exists:sites,id'],
             'consultant_ids' => ['nullable', 'array'],

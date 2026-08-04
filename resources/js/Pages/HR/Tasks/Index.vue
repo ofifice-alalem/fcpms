@@ -75,11 +75,12 @@
             />
           </template>
 
-          <!-- Performance Weight Custom Cell -->
-          <template #cell-performance_weight="{ value }">
-            <span class="font-mono font-bold text-indigo-500 bg-indigo-500/10 px-2.5 py-1 rounded-lg">
-              {{ value }}%
-            </span>
+          <!-- Status Custom Cell -->
+          <template #cell-status="{ value }">
+            <SpatialStatusPill
+              :status="value === 'active' ? 'active' : 'inactive'"
+              :label="value === 'active' ? 'نشط / مفعل' : 'معطل'"
+            />
           </template>
 
           <!-- Actions Column (TB-004) -->
@@ -91,10 +92,10 @@
               <SpatialIconBtn variant="ghost" title="تعديل النموذج" @click="editTask(row.id)">
                 ✏️
               </SpatialIconBtn>
-              <SpatialIconBtn variant="ghost" title="نشر وتفعيل" @click="openPublish(row)">
+              <SpatialIconBtn v-if="row.status !== 'active'" variant="ghost" title="نشر وتفعيل" @click="openPublish(row)">
                 🚀
               </SpatialIconBtn>
-              <SpatialIconBtn variant="ghost" title="تعطيل" @click="openDisable(row)">
+              <SpatialIconBtn v-else variant="ghost" title="تعطيل" @click="openDisable(row)">
                 🚫
               </SpatialIconBtn>
             </div>
@@ -121,8 +122,6 @@
 <script setup>
 /**
  * Index.vue - القائمة الرئيسية لإدارة ونشر نماذج المهام (M3-P01)
- * LY-001: HRLayout Structure
- * TB-001 to TB-004: Table Specs
  */
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
@@ -149,15 +148,15 @@ const toast = ref({ show: false, type: 'success', title: '', message: '' })
 const tableColumns = [
   { key: 'name', label: 'اسم نموذج المهمة', sortable: true },
   { key: 'type', label: 'نوع المهمة', sortable: true },
-  { key: 'performance_weight', label: 'وزن الأداء %', sortable: true }
+  { key: 'status', label: 'حالة النموذج', sortable: true }
 ]
 
 const dailyTasksCount = computed(() => props.tasks.filter(t => t.type === 'daily').length)
 const onDemandTasksCount = computed(() => props.tasks.filter(t => t.type === 'on_demand').length)
 
 const createTask = () => router.get(route('hr.tasks.create'))
-const editTask = (id) => router.get(route('hr.tasks.index', { id }))
-const previewTask = (id) => router.get(route('hr.tasks.preview', { id }))
+const editTask = (id) => router.get(route('hr.tasks.edit', id))
+const previewTask = (id) => router.get(route('hr.tasks.preview', id))
 
 const openPublish = (t) => { selectedTask.value = t; showPublishModal.value = true }
 const openDisable = (t) => { selectedTask.value = t; showDisableModal.value = true }

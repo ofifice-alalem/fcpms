@@ -3,7 +3,7 @@
     :type="type"
     :disabled="disabled || loading"
     @click="$emit('click', $event)"
-    class="relative inline-flex items-center justify-center font-bold text-sm rounded-xl transition-all duration-300 active:scale-95 shadow-md disabled:opacity-50 disabled:pointer-events-none cursor-pointer overflow-hidden"
+    class="relative inline-flex items-center justify-center font-bold rounded-[18px] transition-all duration-200 active:scale-95 shadow-md disabled:opacity-50 disabled:pointer-events-none cursor-pointer overflow-hidden"
     :class="[
       sizeClasses,
       variantClasses,
@@ -19,7 +19,7 @@
     </span>
 
     <!-- Icon & Slot Content -->
-    <span class="flex items-center space-x-2 space-x-reverse" :class="{ 'opacity-0': loading }">
+    <span class="flex items-center gap-2" :class="{ 'opacity-0': loading }">
       <span v-if="icon" class="text-base leading-none">{{ icon }}</span>
       <slot />
     </span>
@@ -28,7 +28,7 @@
 
 <script setup>
 /**
- * SpatialButton.vue - الأزرار الفضائية الزجاجية الممتازة
+ * SpatialButton.vue - زر الفضاء التفاعلي المطابق لـ Design System v3.0
  */
 import { computed } from 'vue'
 
@@ -46,28 +46,28 @@ defineEmits(['click'])
 
 const sizeClasses = computed(() => {
   switch (props.size) {
-    case 'sm': return 'px-3 py-1.5 text-xs'
-    case 'lg': return 'px-7 py-3.5 text-base'
+    case 'sm': return 'px-3.5 py-1.5 text-xs rounded-[14px]'
+    case 'lg': return 'px-7 py-3.5 text-base rounded-[22px]'
     case 'normal':
-    default: return 'px-5 py-2.5 text-sm'
+    default: return 'px-5 py-2.5 text-sm rounded-[18px]'
   }
 })
 
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'secondary':
-      return 'bg-white/80 dark:bg-slate-800/80 text-slate-800 dark:text-slate-100 hover:bg-white dark:hover:bg-slate-700 border border-slate-200/50 dark:border-slate-700/50'
+      return 'bg-black/5 dark:bg-white/10 text-slate-800 dark:text-white hover:bg-black/10 dark:hover:bg-white/15 border border-black/10 dark:border-white/15'
     case 'destructive':
-      return 'bg-gradient-to-r from-rose-600 to-red-600 text-white hover:from-rose-500 hover:to-red-500 shadow-rose-500/25'
+      return 'bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 text-xs font-black shadow-md'
     case 'success':
-      return 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-500 hover:to-teal-500 shadow-emerald-500/25'
+      return 'bg-emerald-500 hover:bg-emerald-600 text-white font-black shadow-md'
     case 'outline':
-      return 'bg-transparent border-2 border-indigo-500 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10'
+      return 'bg-transparent border border-primary text-primary hover:bg-primary/10'
     case 'ghost':
-      return 'bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 shadow-none'
+      return 'bg-transparent text-slate-700 dark:text-white/80 hover:bg-black/5 dark:hover:bg-white/10 shadow-none'
     case 'primary':
     default:
-      return 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500 shadow-indigo-500/30'
+      return 'bg-primary text-white font-black shadow-md shadow-primary/30 hover:bg-blue-600'
   }
 })
 </script>

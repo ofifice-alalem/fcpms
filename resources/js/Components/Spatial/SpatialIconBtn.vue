@@ -3,7 +3,7 @@
     :type="type"
     :disabled="disabled"
     @click="$emit('click', $event)"
-    class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 border backdrop-blur-md shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+    class="spatial-icon-btn !w-9 !h-9 text-sm rounded-full transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
     :class="[variantClasses]"
   >
     <slot />
@@ -12,7 +12,7 @@
 
 <script setup>
 /**
- * SpatialIconBtn.vue - زر الأيقونة المنفرد الفضائي
+ * SpatialIconBtn.vue - زر الأيقونة الدائري الفضائي لـ Design System v3.0
  */
 import { computed } from 'vue'
 
@@ -27,14 +27,14 @@ defineEmits(['click'])
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'primary':
-      return 'bg-indigo-600 text-white border-indigo-500 hover:bg-indigo-500 shadow-indigo-500/30'
+      return 'bg-primary text-white border-primary shadow-md hover:bg-blue-600'
     case 'danger':
-      return 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30 hover:bg-rose-500/25'
+      return 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30'
     case 'ghost':
-      return 'bg-transparent text-slate-500 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800'
+      return 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-white border-transparent hover:bg-black/10 dark:hover:bg-white/20'
     case 'secondary':
     default:
-      return 'bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 border-white/20 dark:border-white/10 hover:bg-white dark:hover:bg-slate-700'
+      return 'bg-black/5 dark:bg-white/10 text-slate-700 dark:text-white border-black/10 dark:border-white/15 hover:bg-black/10 dark:hover:bg-white/20'
   }
 })
 </script>

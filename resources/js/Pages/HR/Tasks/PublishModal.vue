@@ -40,7 +40,7 @@ const submit = () => {
   if (!props.task) return
   isSubmitting.value = true
 
-  router.post(route('hr.tasks.index'), { id: props.task.id, status: 'published' }, {
+  router.patch(route('hr.tasks.change-status', props.task.id), { status: 'published' }, {
     onSuccess: () => {
       isSubmitting.value = false
       emit('success', 'تم نشر نموذج المهمة وتفعيله بنجاح.')

@@ -20,12 +20,13 @@ class TaskDefinitionRepository extends BaseRepository implements TaskDefinitionR
 
     /**
      * Revision 1.2 & BR-036, BR-036-A, BR-036-B:
-     * جلب المهام النشطة المتاحة للاستشاري والموقع بناءً على قواعد التخصيص والمركبة.
+     * جلب المهام اليومية النشطة المتاحة للاستشاري والموقع بناءً على قواعد التخصيص.
      */
     public function getTasksForConsultantAndSite(int $consultantId, int $siteId)
     {
         return $this->model
             ->where('status', 'active')
+            ->where('type', 'daily')
             ->where(function ($query) use ($consultantId, $siteId) {
                 // 1. مهام عامة بالكامل (لا تقتصر على موقع معين ولا استشاري معين)
                 $query->where(function ($q) {

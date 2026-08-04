@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Consultant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubmitSiteVisitRequest;
+use App\Models\SiteVisit;
+use App\Models\TaskDefinition;
 use App\Services\ConsultantWorkflowService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ class DailyWorkController extends Controller
         $user = auth()->user();
         $sites = $this->consultantWorkflowService->getAvailableSites($user->consultant->id);
 
-        return Inertia::render('Consultant/Sites/Index', [
+        return Inertia::render('Consultant/DailyWork/Sites', [
             'sites' => $sites,
         ]);
     }
@@ -42,11 +44,19 @@ class DailyWorkController extends Controller
 
     public function getTasks(int $visitId): Response
     {
+        $visit = SiteVisit::with(['site', 'responses'])->findOrFail($visitId);
         $tasks = $this->consultantWorkflowService->getSiteTasks($visitId);
+        $onDemandTasks = TaskDefinition::where('type', 'on_demand')
+            ->where('status', 'active')
+            ->with('components.options')
+            ->get();
 
-        return Inertia::render('Consultant/Visit/Tasks', [
+        return Inertia::render('Consultant/DailyWork/Tasks', [
             'visitId' => $visitId,
+            'site' => $visit->site,
             'tasks' => $tasks,
+            'onDemandTasks' => $onDemandTasks,
+            'savedResponses' => $visit->responses,
         ]);
     }
 

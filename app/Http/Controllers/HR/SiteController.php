@@ -20,6 +20,15 @@ class SiteController extends Controller
         ]);
     }
 
+    public function show(int $id): Response
+    {
+        $site = Site::with('visits')->findOrFail($id);
+
+        return Inertia::render('HR/Sites/Show', [
+            'site' => $site,
+        ]);
+    }
+
     public function store(StoreSiteRequest $request)
     {
         Site::create($request->validated());

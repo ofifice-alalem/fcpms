@@ -12,76 +12,82 @@
 
       <!-- Bulk Actions Bar -->
       <div v-if="selectedRows.length > 0" class="flex items-center space-x-3 space-x-reverse animate-fadeIn">
-        <span class="text-xs font-bold text-indigo-500 bg-indigo-500/10 px-3 py-1.5 rounded-xl border border-indigo-500/20">
+        <span class="text-xs font-black text-white px-3.5 py-1.5 rounded-full bg-primary shadow-md">
           تم تحديد {{ selectedRows.length }} عنصر
         </span>
         <slot name="bulk-actions" :selected="selectedRows" />
       </div>
     </div>
 
-    <!-- Table Container -->
-    <div class="overflow-x-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl shadow-lg">
-      <table class="w-full text-right text-sm">
-        <thead class="bg-slate-100/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-xs font-bold uppercase border-b border-slate-200/50 dark:border-slate-800/50">
-          <tr>
-            <th v-if="selectable" class="p-4 w-12 text-center">
-              <SpatialCheckbox
-                :modelValue="isAllSelected"
-                @update:modelValue="toggleSelectAll"
-              />
-            </th>
-            <th
-              v-for="col in columns"
-              :key="col.key"
-              @click="col.sortable ? sortBy(col.key) : null"
-              class="p-4 transition-colors"
-              :class="[col.sortable ? 'cursor-pointer hover:text-indigo-500' : '']"
+    <!-- Table Container (Spatial Card v3.0) -->
+    <div class="spatial-card overflow-hidden rounded-[26px] p-0 shadow-xl border border-black/10 dark:border-white/10">
+      <div class="overflow-x-auto">
+        <table class="w-full text-right text-sm">
+          <thead class="bg-black/5 dark:bg-white/5 text-slate-500 dark:text-white/60 font-bold uppercase text-xs border-b border-black/10 dark:border-white/10">
+            <tr>
+              <th v-if="selectable" class="p-4 w-12 text-center">
+                <input
+                  type="checkbox"
+                  class="row-checkbox cursor-pointer"
+                  :checked="isAllSelected"
+                  @change="toggleSelectAll($event.target.checked)"
+                />
+              </th>
+              <th
+                v-for="col in columns"
+                :key="col.key"
+                @click="col.sortable ? sortBy(col.key) : null"
+                class="p-4 transition-colors"
+                :class="[col.sortable ? 'cursor-pointer hover:text-primary' : '']"
+              >
+                <div class="flex items-center space-x-1 space-x-reverse font-black">
+                  <span>{{ col.label }}</span>
+                  <span v-if="col.sortable && sortColumn === col.key" class="text-xs text-primary">
+                    {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                  </span>
+                </div>
+              </th>
+              <th v-if="$slots.actions" class="p-4 text-center font-black">الإجراءات</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-black/5 dark:divide-white/5 text-slate-800 dark:text-white font-bold">
+            <tr
+              v-for="(row, idx) in paginatedData"
+              :key="row.id || idx"
+              class="transition-all hover:bg-primary/5 dark:hover:bg-primary/10"
+              :class="[isRowSelected(row) ? 'selected-row' : '']"
             >
-              <div class="flex items-center space-x-1 space-x-reverse">
-                <span>{{ col.label }}</span>
-                <span v-if="col.sortable && sortColumn === col.key" class="text-xs">
-                  {{ sortDirection === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </th>
-            <th v-if="$slots.actions" class="p-4 text-center">الإجراءات</th>
-          </tr>
-        </thead>
+              <td v-if="selectable" class="p-4 text-center">
+                <input
+                  type="checkbox"
+                  class="row-checkbox cursor-pointer"
+                  :checked="isRowSelected(row)"
+                  @change="toggleSelectRow(row)"
+                />
+              </td>
+              <td v-for="col in columns" :key="col.key" class="p-4">
+                <slot :name="`cell-${col.key}`" :row="row" :value="row[col.key]">
+                  {{ row[col.key] }}
+                </slot>
+              </td>
+              <td v-if="$slots.actions" class="p-4 text-center">
+                <slot name="actions" :row="row" />
+              </td>
+            </tr>
 
-        <tbody class="divide-y divide-slate-200/30 dark:divide-slate-800/30 text-slate-800 dark:text-slate-200">
-          <tr
-            v-for="(row, idx) in paginatedData"
-            :key="row.id || idx"
-            class="transition-colors hover:bg-indigo-500/5 dark:hover:bg-indigo-500/10"
-            :class="[isRowSelected(row) ? 'bg-indigo-500/10 dark:bg-indigo-500/20' : '']"
-          >
-            <td v-if="selectable" class="p-4 text-center">
-              <SpatialCheckbox
-                :modelValue="isRowSelected(row)"
-                @update:modelValue="toggleSelectRow(row)"
-              />
-            </td>
-            <td v-for="col in columns" :key="col.key" class="p-4">
-              <slot :name="`cell-${col.key}`" :row="row" :value="row[col.key]">
-                {{ row[col.key] }}
-              </slot>
-            </td>
-            <td v-if="$slots.actions" class="p-4 text-center">
-              <slot name="actions" :row="row" />
-            </td>
-          </tr>
-
-          <tr v-if="paginatedData.length === 0">
-            <td :colspan="columns.length + (selectable ? 1 : 0) + ($slots.actions ? 1 : 0)" class="p-8 text-center">
-              <SpatialEmptyState title="لا توجد بيانات متاحة" message="لم يتم العثور على سجلات مطابقة للبحث الحالي." />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <tr v-if="paginatedData.length === 0">
+              <td :colspan="columns.length + (selectable ? 1 : 0) + ($slots.actions ? 1 : 0)" class="p-8 text-center">
+                <SpatialEmptyState title="لا توجد بيانات متاحة" message="لم يتم العثور على سجلات مطابقة للبحث الحالي." />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Pagination Footer -->
-    <div v-if="totalPages > 1" class="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+    <div v-if="totalPages > 1" class="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-white/60 pt-2">
       <span>عرض الصفحة {{ currentPage }} من {{ totalPages }}</span>
       <div class="flex items-center space-x-2 space-x-reverse">
         <SpatialButton
@@ -107,16 +113,15 @@
 
 <script setup>
 /**
- * SpatialTable.vue - جدول البيانات المتقدم مع البحث، الترتيب، التحديد المتعدد والصفحات
+ * SpatialTable.vue - جدول البيانات الفضائي المطابق لـ Design System v3.0
  */
 import { ref, computed } from 'vue'
 import SpatialInput from './SpatialInput.vue'
-import SpatialCheckbox from './SpatialCheckbox.vue'
 import SpatialButton from './SpatialButton.vue'
 import SpatialEmptyState from './SpatialEmptyState.vue'
 
 const props = defineProps({
-  columns: { type: Array, required: true }, // [{ key, label, sortable }]
+  columns: { type: Array, required: true },
   data: { type: Array, required: true },
   selectable: { type: Boolean, default: false },
   perPage: { type: Number, default: 10 }

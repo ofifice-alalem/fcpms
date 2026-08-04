@@ -7,13 +7,22 @@ use App\Http\Controllers\HR\SiteController;
 use App\Http\Controllers\HR\TaskController;
 use App\Http\Controllers\Reports\PerformanceReportController;
 use App\Http\Controllers\Reports\SiteActivityReportController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+});
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout')->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {
 
     // ==========================================
     // 1. HR Routes (مسارات إدارة الموارد البشرية)
@@ -22,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // إدارة الاستشاريين
         Route::get('/consultants', [ConsultantController::class, 'index'])->name('consultants.index');
+        Route::post('/consultants', [ConsultantController::class, 'store'])->name('consultants.store');
         Route::get('/consultants/{id}', [ConsultantController::class, 'show'])->name('consultants.show');
         Route::put('/consultants/{id}', [ConsultantController::class, 'update'])->name('consultants.update');
         Route::patch('/consultants/{id}/status', [ConsultantController::class, 'changeStatus'])->name('consultants.change-status');
@@ -29,12 +39,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // إدارة المواقع
         Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
         Route::post('/sites', [SiteController::class, 'store'])->name('sites.store');
+        Route::get('/sites/{id}', [SiteController::class, 'show'])->name('sites.show');
         Route::put('/sites/{id}', [SiteController::class, 'update'])->name('sites.update');
 
         // Task Builder - إدارة المهام
         Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
         Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
         Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+        Route::get('/tasks/{id}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+        Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
+        Route::patch('/tasks/{id}/status', [TaskController::class, 'changeStatus'])->name('tasks.change-status');
         Route::get('/tasks/{id}/preview', [TaskController::class, 'preview'])->name('tasks.preview');
     });
 

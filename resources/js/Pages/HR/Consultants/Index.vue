@@ -9,6 +9,15 @@
           <h2 class="text-2xl font-black text-slate-800 dark:text-white">قائمة الاستشاريين الميدانيين</h2>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">متابعة السجلات الوظيفية، جداول العمل، والإجازات للاستشاريين بالشركة</p>
         </div>
+
+        <SpatialButton
+          variant="primary"
+          size="lg"
+          icon="➕"
+          @click="showCreateDrawer = true"
+        >
+          إضافة استشاري جديد
+        </SpatialButton>
       </div>
 
       <!-- 2. Statistics Summary Cards -->
@@ -97,6 +106,12 @@
       </SpatialCard>
 
       <!-- Drawers & Modals -->
+      <CreateConsultantDrawer
+        :show="showCreateDrawer"
+        @close="showCreateDrawer = false"
+        @success="handleSuccess"
+      />
+
       <EditConsultantDrawer
         :show="showEditDrawer"
         :consultant="selectedConsultant"
@@ -141,18 +156,17 @@
 <script setup>
 /**
  * Index.vue - القائمة الرئيسية لإدارة الاستشاريين الميدانيين لـ HR (M1-P01)
- * LY-001: HRLayout Structure
- * TB-001 to TB-004: Table Specs
- * Drawers & Modals integration
  */
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 import HRLayout from '@/Layouts/HRLayout.vue'
 import SpatialCard from '@/Components/Spatial/SpatialCard.vue'
+import SpatialButton from '@/Components/Spatial/SpatialButton.vue'
 import SpatialIconBtn from '@/Components/Spatial/SpatialIconBtn.vue'
 import SpatialStatusPill from '@/Components/Spatial/SpatialStatusPill.vue'
 import SpatialTable from '@/Components/Spatial/SpatialTable.vue'
 import SpatialToast from '@/Components/Spatial/SpatialToast.vue'
+import CreateConsultantDrawer from './Create.vue'
 import EditConsultantDrawer from './Edit.vue'
 import ChangeStatusModal from './ChangeStatus.vue'
 import AssignScheduleModal from './AssignSchedule.vue'
@@ -163,6 +177,7 @@ const props = defineProps({
   schedules: { type: Array, default: () => [] }
 })
 
+const showCreateDrawer = ref(false)
 const showEditDrawer = ref(false)
 const showStatusModal = ref(false)
 const showScheduleModal = ref(false)
@@ -182,7 +197,7 @@ const activeCount = computed(() => props.consultants.filter(c => c.status === 'a
 const vacationCount = computed(() => props.consultants.filter(c => c.status === 'vacation').length)
 
 const viewProfile = (id) => {
-  router.get(route('hr.consultants.show', { id }))
+  router.get(route('hr.consultants.show', id))
 }
 
 const openEdit = (c) => { selectedConsultant.value = c; showEditDrawer.value = true }

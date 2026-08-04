@@ -59,7 +59,7 @@
         </SpatialCard>
       </div>
 
-      <!-- 3. Sites Data Table with Search, Filter & Bulk Actions (TB-001, TB-002, TB-003, TB-004) -->
+      <!-- 3. Sites Data Table -->
       <SpatialCard>
         <SpatialTable
           :columns="tableColumns"
@@ -89,7 +89,7 @@
             />
           </template>
 
-          <!-- Actions Column (TB-004) -->
+          <!-- Actions Column -->
           <template #actions="{ row }">
             <div class="flex items-center justify-center space-x-2 space-x-reverse">
               <SpatialIconBtn variant="ghost" title="تعديل" @click="openEdit(row)">
@@ -117,7 +117,7 @@
         @success="handleSuccess"
       />
 
-      <!-- Feedback Toast Notification (FB-001 & FB-002) -->
+      <!-- Feedback Toast Notification -->
       <SpatialToast
         v-if="toast.show"
         :type="toast.type"
@@ -132,11 +132,6 @@
 <script setup>
 /**
  * Index.vue - الصفحة الرئيسية لإدارة المواقع الميدانية لـ HR (M2-P01)
- * LY-001: HRLayout Structure
- * TB-001 to TB-004: Table Search, Filter, Sort, Pagination & Actions Column
- * FM-002: Create & Edit via SpatialDrawers
- * DL-001 & DL-003: Confirm Actions
- * FB-001 & FB-002: Toast Notifications
  */
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
@@ -160,7 +155,7 @@ const selectedSite = ref(null)
 
 const toast = ref({ show: false, type: 'success', title: '', message: '' })
 
-// Table Specs (TB-001)
+// Table Specs
 const tableColumns = [
   { key: 'code', label: 'رمز الموقع', sortable: true },
   { key: 'name', label: 'اسم الموقع', sortable: true },
@@ -177,7 +172,7 @@ const openEdit = (site) => {
 }
 
 const showSite = (id) => {
-  router.get(route('hr.sites.index', { site: id }))
+  router.get(route('hr.sites.show', id))
 }
 
 const handleSuccess = (msg) => {

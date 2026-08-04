@@ -41,7 +41,8 @@
           :glow="false"
           class="group hover:border-indigo-500 transition-all duration-300 flex flex-col justify-between"
         >
-          <div class="space-y-3">
+          <div class="space-y-4">
+            <!-- Header & Code -->
             <div class="flex items-start justify-between">
               <div>
                 <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 group-hover:text-indigo-500 transition-colors">
@@ -52,9 +53,27 @@
               <SpatialStatusPill status="active" label="نشط" />
             </div>
 
+            <!-- Location info -->
             <div class="flex items-center text-xs text-slate-500 dark:text-slate-400 space-x-1 space-x-reverse">
               <span>📍</span>
               <span>{{ site.location || 'الموقع الرئيسي' }}</span>
+            </div>
+
+            <!-- Completion Progress Bar & On-Demand Executed Tasks Count Badge -->
+            <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <SpatialProgressBar
+                :value="site.completion_percentage || 0"
+                :max="100"
+                label="نسبة إنجاز الزيارة اليومية"
+              />
+
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400 font-bold">المهام عند الطلب المُنفذة:</span>
+                <span class="px-2.5 py-1 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 font-bold flex items-center gap-1">
+                  <span>➕</span>
+                  <span>{{ site.on_demand_tasks_count || 0 }} مهام مُنفّذة</span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -68,7 +87,7 @@
               :loading="selectingSiteId === site.id"
               @click="selectSite(site.id)"
             >
-              بدء زيارة الموقع
+              {{ site.completion_percentage > 0 ? 'استئناف زيارة الموقع' : 'بدء زيارة الموقع' }}
             </SpatialButton>
           </div>
         </SpatialCard>
@@ -92,6 +111,7 @@ import SpatialCard from '@/Components/Spatial/SpatialCard.vue'
 import SpatialInput from '@/Components/Spatial/SpatialInput.vue'
 import SpatialButton from '@/Components/Spatial/SpatialButton.vue'
 import SpatialStatusPill from '@/Components/Spatial/SpatialStatusPill.vue'
+import SpatialProgressBar from '@/Components/Spatial/SpatialProgressBar.vue'
 import SpatialEmptyState from '@/Components/Spatial/SpatialEmptyState.vue'
 import SpatialSkeleton from '@/Components/Spatial/SpatialSkeleton.vue'
 

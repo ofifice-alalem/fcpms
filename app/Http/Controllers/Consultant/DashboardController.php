@@ -20,10 +20,12 @@ class DashboardController extends Controller
         $consultant = $user->consultant;
 
         $dailyRecord = $this->consultantWorkflowService->startOrResumeDay($consultant->id, Carbon::now());
+        $dailyRecord->load('siteVisits.site');
 
         return Inertia::render('Consultant/Dashboard', [
             'consultant' => $consultant,
-            'dailyRecord' => $dailyRecord->load('siteVisits.site'),
+            'dailyRecord' => $dailyRecord,
+            'siteVisits' => $dailyRecord->siteVisits,
         ]);
     }
 }

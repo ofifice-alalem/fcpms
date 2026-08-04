@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\DailyRecord;
 use App\Models\Site;
 use App\Models\SiteVisit;
+use App\Models\TaskDefinition;
 use App\Models\TaskResponse;
 use App\Repositories\Contracts\ConsultantRepositoryInterface;
 use App\Repositories\Contracts\DailyRecordRepositoryInterface;
@@ -47,26 +48,67 @@ class ConsultantWorkflowService
     }
 
     /**
-     * جلب قائمة المواقع النشطة المتاحة للاستشاري
+     * جلب قائمة المواقع النشطة المتاحة للاستشاري مرفقة بنسبة الإنجاز وعدد المهام عند الطلب المنفذة فعلياً
      */
     public function getAvailableSites(int $consultantId): Collection
     {
-        return Site::where('status', 'active')->get();
+        $sites = Site::where('status', 'active')->get();
+
+        $dailyRecord = DailyRecord::where('consultant_id', $consultantId)
+            ->whereDate('work_date', Carbon::today())
+            ->first();
+
+        return $sites->map(function ($site) use ($dailyRecord, $consultantId) {
+            $completionPercentage = 0;
+            $completedOnDemandCount = 0;
+
+            if ($dailyRecord) {
+                $visit = SiteVisit::where('daily_record_id', $dailyRecord->id)
+                    ->where('site_id', $site->id)
+                    ->first();
+
+                if ($visit) {
+                    if ($visit->status === 'completed') {
+                        $completionPercentage = 100;
+                    } else {
+                        $tasks = $this->taskDefinitionRepository->getTasksForConsultantAndSite($consultantId, $site->id);
+                        $totalTasks = $tasks->count();
+                        if ($totalTasks > 0) {
+                            $responsesCount = TaskResponse::where('site_visit_id', $visit->id)->count();
+                            $completionPercentage = min(100, (int) round(($responsesCount / $totalTasks) * 100));
+                        }
+                    }
+
+                    // احتساب عدد المهام عند الطلب المنفذة فعلياً بهذا الموقع اليوم
+                    $completedOnDemandCount = TaskResponse::where('site_visit_id', $visit->id)
+                        ->whereHas('taskDefinition', fn($q) => $q->where('type', 'on_demand'))
+                        ->count();
+                }
+            }
+
+            $site->completion_percentage = $completionPercentage;
+            $site->on_demand_tasks_count = $completedOnDemandCount;
+            return $site;
+        });
     }
 
     /**
-     * بدء زيارة موقع ميداني جديد للاستشاري
+     * بدء أو استئناف زيارة موقع ميداني للاستشاري (زيارة واحدة فقط لكل موقع باليوم - BR-026)
      */
     public function startSiteVisit(int $consultantId, int $siteId, ?Carbon $date = null): SiteVisit
     {
         $dailyRecord = $this->startOrResumeDay($consultantId, $date);
 
-        return SiteVisit::create([
-            'daily_record_id' => $dailyRecord->id,
-            'site_id' => $siteId,
-            'visit_started_at' => Carbon::now(),
-            'status' => 'in_progress',
-        ]);
+        return SiteVisit::firstOrCreate(
+            [
+                'daily_record_id' => $dailyRecord->id,
+                'site_id' => $siteId,
+            ],
+            [
+                'visit_started_at' => Carbon::now(),
+                'status' => 'in_progress',
+            ]
+        );
     }
 
     /**

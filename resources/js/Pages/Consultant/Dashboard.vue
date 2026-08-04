@@ -91,7 +91,7 @@
             <div>
               <p class="text-xs font-bold text-slate-500 dark:text-slate-400">زيارات المواقع اليومية</p>
               <h3 class="text-3xl font-black text-slate-800 dark:text-white mt-1">
-                {{ siteVisits.length }} <span class="text-sm font-semibold text-slate-400">مواقع</span>
+                {{ effectiveSiteVisits.length }} <span class="text-sm font-semibold text-slate-400">مواقع</span>
               </h3>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-2xl">
@@ -105,7 +105,7 @@
       <SpatialCard title="سجل زيارات اليوم" subtitle="جميع المواقع الميدانية المسجلة اليوم">
         <!-- Empty State Handling (FB-003) -->
         <SpatialEmptyState
-          v-if="siteVisits.length === 0"
+          v-if="effectiveSiteVisits.length === 0"
           icon="🏗️"
           title="لم تبدأ أي زيارة ميدانية بعد"
           message="قم باختيار موقع ميداني لبدء تسجيل المهام والإشراف."
@@ -121,7 +121,7 @@
         <SpatialTable
           v-else
           :columns="tableColumns"
-          :data="siteVisits"
+          :data="effectiveSiteVisits"
           :perPage="5"
         >
           <!-- Custom Site Cell -->
@@ -204,12 +204,20 @@ const statusDescription = computed(() => {
   return 'اضغط على زر بدء اليوم لإنشاء سجل اليوم والبدء في متابعة المهام.'
 })
 
+// Effective Site Visits list computed from props
+const effectiveSiteVisits = computed(() => {
+  if (props.siteVisits && props.siteVisits.length > 0) return props.siteVisits
+  if (props.dailyRecord?.siteVisits && props.dailyRecord.siteVisits.length > 0) return props.dailyRecord.siteVisits
+  if (props.dailyRecord?.site_visits && props.dailyRecord.site_visits.length > 0) return props.dailyRecord.site_visits
+  return []
+})
+
 // Metrics computation (Revision 1.1)
 const completionPercentage = computed(() => props.dailyRecord ? parseFloat(props.dailyRecord.completion_percentage || 0) : 0)
 const completedTasks = computed(() => props.dailyRecord ? props.dailyRecord.completed_daily_tasks || 0 : 0)
 const requiredTasks = computed(() => props.dailyRecord ? props.dailyRecord.required_daily_tasks || 0 : 0)
 
-const activeVisit = computed(() => props.siteVisits.find(v => v.status === 'in_progress'))
+const activeVisit = computed(() => effectiveSiteVisits.value.find(v => v.status === 'in_progress'))
 
 // Table Specifications (TB-001)
 const tableColumns = [
