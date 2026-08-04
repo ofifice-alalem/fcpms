@@ -83,7 +83,17 @@
 
 ---
 
-## 9. Success Criteria
+## 9. Success Criteria & Definition of Done (DoD)
+
+> [!IMPORTANT]
+> **لا تعتبر المرحلة منتهية حتى يتحقق الآتي:**
+> * [ ] ✓ جميع الـ Routes والـ Endpoints تعمل بدون أخطاء.
+> * [ ] ✓ جميع سياسات الحماية والصلاحيات (Policies & Permissions) تفرض وتعمل بدقة.
+> * [ ] ✓ جميع اختبارات الميزات (Feature Tests) ناجحة بنسبة 100%.
+> * [ ] ✓ جميع صفحات وعناصر الواجهة (Spatial UI) مكتملة ومطابقة للمواصفات البصرية.
+> * [ ] ✓ جميع قواعد الأعمال المحددة (Business Rules) مطبقة ومختبرة بالكامل.
+
+---
 
 * [ ] حظر سحب أو تعديل صلاحيات الـ Super Admin وفق `test_super_admin_role_permissions_cannot_be_revoked()`.
 * [ ] التوليد التلقائي لسجل التدقيق عند إجراء أي تغيير حساس وفق `test_all_critical_model_changes_generate_activity_log_entry()`.

@@ -89,7 +89,17 @@
 
 ---
 
-## 9. Success Criteria
+## 9. Success Criteria & Definition of Done (DoD)
+
+> [!IMPORTANT]
+> **لا تعتبر المرحلة منتهية حتى يتحقق الآتي:**
+> * [ ] ✓ جميع الـ Routes والـ Endpoints تعمل بدون أخطاء.
+> * [ ] ✓ جميع سياسات الحماية والصلاحيات (Policies & Permissions) تفرض وتعمل بدقة.
+> * [ ] ✓ جميع اختبارات الميزات (Feature Tests) ناجحة بنسبة 100%.
+> * [ ] ✓ جميع صفحات وعناصر الواجهة (Spatial UI) مكتملة ومطابقة للمواصفات البصرية.
+> * [ ] ✓ جميع قواعد الأعمال المحددة (Business Rules) مطبقة ومختبرة بالكامل.
+
+---
 
 * [ ] إمكانية إضافة موقع برمز فريد نجاح الاختبار `test_can_create_site_with_unique_code()`.
 * [ ] منع حذف أي موقع يحتوي على زيارات معلقة نجاح الاختبار `test_cannot_delete_site_with_pending_visits()`.
